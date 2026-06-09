@@ -174,32 +174,33 @@ export default function AdminLoginPage() {
     resolver: zodResolver(loginSchema),
   });
 
-const onSubmit = async (data: LoginFormData) => {
-  try {
-    const response = await login(data).unwrap();
+  const onSubmit = async (data: LoginFormData) => {
+    try {
+      const response = await login(data).unwrap();
 
-    dispatch(
-      setCredentials({
-        admin: response.data.admin,
-        accessToken: response.data.accessToken,
-      })
-    );
+      dispatch(
+        setCredentials({
+          admin: response.data.admin,
+          accessToken: response.data.accessToken,
+        })
+      );
 
-    // ✅ localStorage mein save karo
-    if (typeof window !== "undefined") {
-      localStorage.setItem("accessToken", response.data.accessToken);
+      // ✅ localStorage mein save karo
+      if (typeof window !== "undefined") {
+        localStorage.setItem("accessToken", response.data.accessToken);
+        localStorage.setItem("refreshToken", response.data.refreshToken);
+      }
+
+      toast.success(`Welcome back, ${response.data.admin.name}!`);
+
+      // ✅ Hard redirect
+      window.location.href = "/admin/dashboard";
+
+    } catch (error) {
+      const err = error as { data?: { message?: string } };
+      toast.error(err?.data?.message ?? "Invalid email or password");
     }
-
-    toast.success(`Welcome back, ${response.data.admin.name}!`);
-
-    // ✅ Hard redirect
-    window.location.href = "/admin/dashboard";
-
-  } catch (error) {
-    const err = error as { data?: { message?: string } };
-    toast.error(err?.data?.message ?? "Invalid email or password");
-  }
-};
+  };
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -240,9 +241,8 @@ const onSubmit = async (data: LoginFormData) => {
                   type="email"
                   placeholder="admin@qrfood.com"
                   autoComplete="email"
-                  className={`w-full rounded-lg border bg-gray-50 pl-9 pr-4 py-2.5 text-sm text-gray-900 outline-none transition placeholder:text-gray-300 focus:border-gray-400 focus:bg-white focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-600 dark:focus:bg-gray-750 ${
-                    errors.email ? "border-red-300" : "border-gray-100 dark:border-gray-700"
-                  }`}
+                  className={`w-full rounded-lg border bg-gray-50 pl-9 pr-4 py-2.5 text-sm text-gray-900 outline-none transition placeholder:text-gray-300 focus:border-gray-400 focus:bg-white focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-600 dark:focus:bg-gray-750 ${errors.email ? "border-red-300" : "border-gray-100 dark:border-gray-700"
+                    }`}
                 />
               </div>
               {errors.email && (
@@ -262,9 +262,8 @@ const onSubmit = async (data: LoginFormData) => {
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   autoComplete="current-password"
-                  className={`w-full rounded-lg border bg-gray-50 pl-9 pr-10 py-2.5 text-sm text-gray-900 outline-none transition placeholder:text-gray-300 focus:border-gray-400 focus:bg-white dark:bg-gray-800 dark:text-white ${
-                    errors.password ? "border-red-300" : "border-gray-100 dark:border-gray-700"
-                  }`}
+                  className={`w-full rounded-lg border bg-gray-50 pl-9 pr-10 py-2.5 text-sm text-gray-900 outline-none transition placeholder:text-gray-300 focus:border-gray-400 focus:bg-white dark:bg-gray-800 dark:text-white ${errors.password ? "border-red-300" : "border-gray-100 dark:border-gray-700"
+                    }`}
                 />
                 <button
                   type="button"
@@ -320,7 +319,7 @@ const onSubmit = async (data: LoginFormData) => {
                     className="flex items-center gap-1 text-[10px] text-gray-400 hover:text-gray-600 transition"
                   >
                     <svg width="11" height="11" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-                      <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                      <rect x="9" y="9" width="13" height="13" rx="2" /><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
                     </svg>
                     copy
                   </button>

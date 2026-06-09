@@ -18,76 +18,75 @@ import {
 import bcrypt from "bcryptjs";
 
 
+// ✅ Naya
 const cookieOptions = {
   httpOnly: true,
-  secure:
-    env.NODE_ENV === "production",
-  sameSite: "strict",
+  secure: env.NODE_ENV === "production",
+  sameSite: env.NODE_ENV === "production" ? "none" : "strict",
 };
 
 
-
 const loginAdmin = asyncHandler(
-    async (req,res)=>{
-        const { email, password } = req.body;
+  async (req, res) => {
+    const { email, password } = req.body;
 
-        if(!email || !password){
-            throw new ApiError(
-                400,
-                "Email and password are required"
-            )
-        }
-
-        const admin = await Admin.findOne({
-            email,
-        }).select("+password +refreshToken");
-
-        if(!admin){
-            throw new ApiError(
-                401,
-                "Invalid email or password"
-            )
-        }
-
-        const isPasswordvalid = await admin.comparePassword(
-            password
-        );
-
-        if(!isPasswordvalid){
-            throw new ApiError(
-                401,
-                "Invalid email or password"
-            )
-        }
-
-     const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(admin._id);
-
-
-        const loggedInAdmin = 
-          await Admin.findById(admin._id).select("-password -refreshToken");
-
-          return res.status(200).cookie(
-            "accessToken",
-            accessToken,
-            cookieOptions
-          )
-          .cookie(
-            "refreshToken",
-            refreshToken,
-            cookieOptions
-          ).json(
-            new ApiResponse(
-                200,
-                {
-                    admin: loggedInAdmin,
-                    accessToken,
-                    refreshToken,
-                },
-                "Login Successfully"
-            )
-          )
-
+    if (!email || !password) {
+      throw new ApiError(
+        400,
+        "Email and password are required"
+      )
     }
+
+    const admin = await Admin.findOne({
+      email,
+    }).select("+password +refreshToken");
+
+    if (!admin) {
+      throw new ApiError(
+        401,
+        "Invalid email or password"
+      )
+    }
+
+    const isPasswordvalid = await admin.comparePassword(
+      password
+    );
+
+    if (!isPasswordvalid) {
+      throw new ApiError(
+        401,
+        "Invalid email or password"
+      )
+    }
+
+    const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(admin._id);
+
+
+    const loggedInAdmin =
+      await Admin.findById(admin._id).select("-password -refreshToken");
+
+    return res.status(200).cookie(
+      "accessToken",
+      accessToken,
+      cookieOptions
+    )
+      .cookie(
+        "refreshToken",
+        refreshToken,
+        cookieOptions
+      ).json(
+        new ApiResponse(
+          200,
+          {
+            admin: loggedInAdmin,
+            accessToken,
+            refreshToken,
+          },
+          "Login Successfully"
+        )
+      )
+
+  }
 )
 
 
@@ -95,26 +94,26 @@ const loginAdmin = asyncHandler(
 
 
 const logoutAdmin = asyncHandler(
-    async (req,res)=>{
-        await Admin.findByIdAndUpdate(
-            req.admin._id,
-            {
-                $unset:{
-                    refreshToken:1,
-                }
-            }
-        );
+  async (req, res) => {
+    await Admin.findByIdAndUpdate(
+      req.admin._id,
+      {
+        $unset: {
+          refreshToken: 1,
+        }
+      }
+    );
 
-        return res.status(200).clearCookie("accessToken", cookieOptions)
-   .clearCookie("refreshToken", cookieOptions)
-        .json(
-            new ApiResponse(
-                200,
-                {},
-                "Logout Successfully"
-            )
-        );
-    }
+    return res.status(200).clearCookie("accessToken", cookieOptions)
+      .clearCookie("refreshToken", cookieOptions)
+      .json(
+        new ApiResponse(
+          200,
+          {},
+          "Logout Successfully"
+        )
+      );
+  }
 )
 
 
@@ -289,5 +288,5 @@ const seedAdmin = asyncHandler(async (req, res) => {
 
 
 
-  export { loginAdmin, logoutAdmin, refreshAccessToken, getCurrentAdmin, seedAdmin };
+export { loginAdmin, logoutAdmin, refreshAccessToken, getCurrentAdmin, seedAdmin };
 

@@ -34,12 +34,16 @@ const startServer = async () => {
     const httpServer = http.createServer(app);
 
     // Socket.io Server
-    const io = new Server(httpServer, {
-      cors: {
-        origin: env.CLIENT_URL || "http://localhost:3000",
-        credentials: true,
-      },
-    });
+const io = new Server(httpServer, {
+  cors: {
+    origin: [
+      "http://localhost:3000",
+      "https://qr-food-ordering-system-nine.vercel.app",
+      env.CLIENT_URL,
+    ].filter(Boolean),
+    credentials: true,
+  },
+});
 
     // Socket Instance Store
     app.set("io", io);

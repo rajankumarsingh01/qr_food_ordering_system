@@ -32,7 +32,11 @@ app.use(helmet());
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: [
+      "http://localhost:3000",
+      "https://qr-food-ordering-system-nine.vercel.app",
+      process.env.CLIENT_URL,
+    ].filter(Boolean),
     credentials: true,
   })
 );

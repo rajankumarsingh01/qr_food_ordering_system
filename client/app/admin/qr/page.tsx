@@ -5,7 +5,7 @@ import { QRCodeCanvas } from "qrcode.react"
 import { Download, Plus, Minus, QrCode } from "lucide-react"
 
 const BASE_URL =
-  process.env.NEXT_PUBLIC_APP_URL ?? "https://qr-food-ordering-system-nine.vercel.app/"
+  process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"
 
 // ── Single QR Card ─────────────────────────────────────────────────
 function QRCard({ tableNumber }: { tableNumber: number }) {

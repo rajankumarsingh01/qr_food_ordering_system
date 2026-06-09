@@ -1,0 +1,45 @@
+{
+  "name": "sqr-food-ordering-server",
+  "version": "1.0.0",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "lint": "node --check server.js"
+  },
+  "keywords": [
+    "mern",
+    "restaurant",
+    "qr-ordering",
+    "socketio"
+  ],
+  "author": "Rajan Kumar Singh",
+  "license": "ISC",
+  "description": "QR Food Ordering Backend",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cloudinary": "^1.41.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.5.2",
+    "helmet": "^8.2.0",
+    "ioredis": "^5.11.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.6.3",
+    "morgan": "^1.11.0",
+    "multer": "^2.1.1",
+    "multer-storage-cloudinary": "^4.0.0",
+    "qrcode": "^1.5.4",
+    "razorpay": "^2.9.6",
+    "socket.io": "^4.8.3",
+    "streamifier": "^0.1.1",
+    "winston": "^3.19.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}

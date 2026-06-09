@@ -38,8 +38,12 @@ const createTable =
       );
     }
 
+    // const qrValue =
+    //   `${process.env.CLIENT_URL}/menu?table=${tableNumber}`;
+
     const qrValue =
-      `${process.env.CLIENT_URL}/menu?table=${tableNumber}`;
+  `${process.env.CLIENT_URL}/customer/menu?table=${tableNumber}`;
+
 
     const qrBuffer =
       await generateQRCode(

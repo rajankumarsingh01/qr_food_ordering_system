@@ -174,20 +174,32 @@ export default function AdminLoginPage() {
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = async (data: LoginFormData) => {
-    try {
-      const response = await login(data).unwrap();
-      dispatch(setCredentials({
+const onSubmit = async (data: LoginFormData) => {
+  try {
+    const response = await login(data).unwrap();
+
+    dispatch(
+      setCredentials({
         admin: response.data.admin,
         accessToken: response.data.accessToken,
-      }));
-      toast.success(`Welcome back, ${response.data.admin.name}!`);
-      router.push("/admin/dashboard");
-    } catch (error) {
-      const err = error as { data?: { message?: string } };
-      toast.error(err?.data?.message ?? "Invalid email or password");
+      })
+    );
+
+    // ✅ localStorage mein save karo
+    if (typeof window !== "undefined") {
+      localStorage.setItem("accessToken", response.data.accessToken);
     }
-  };
+
+    toast.success(`Welcome back, ${response.data.admin.name}!`);
+
+    // ✅ Hard redirect
+    window.location.href = "/admin/dashboard";
+
+  } catch (error) {
+    const err = error as { data?: { message?: string } };
+    toast.error(err?.data?.message ?? "Invalid email or password");
+  }
+};
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);

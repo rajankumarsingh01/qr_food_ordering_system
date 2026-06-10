@@ -3,8 +3,8 @@
 import {
   Heart,
   Utensils,
-  GithubIcon,
-  LinkedinIcon,
+  Github,
+  Linkedin,
   Globe,
 } from "lucide-react";
 
@@ -58,7 +58,7 @@ export default function Footer() {
               aria-label="GitHub"
               className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-600 dark:border-gray-700 dark:hover:border-indigo-700 dark:hover:bg-indigo-950 dark:hover:text-indigo-400"
             >
-              <GithubIcon size={13} />
+              <Github size={13} />
             </a>
 
             <a
@@ -68,7 +68,7 @@ export default function Footer() {
               aria-label="LinkedIn"
               className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-600 dark:border-gray-700 dark:hover:border-indigo-700 dark:hover:bg-indigo-950 dark:hover:text-indigo-400"
             >
-              <LinkedinIcon size={13} />
+              <Linkedin size={13} />
             </a>
 
             <a

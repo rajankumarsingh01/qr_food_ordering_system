@@ -8,6 +8,8 @@ import {
   refreshAccessToken,
   getCurrentAdmin,
     seedAdmin,
+     forgotPassword,
+  resetPassword,
 } from "../controllers/auth.controller.js";
 
 const router = Router();
@@ -40,5 +42,8 @@ router.get(
   verifyJWT,
   getCurrentAdmin
 );
+
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password", resetPassword);
 
 export default router;

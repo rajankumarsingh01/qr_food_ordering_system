@@ -38,6 +38,22 @@ export const authApi = baseApi.injectEndpoints({
       providesTags: ["Auth"],
     }),
 
+    forgotPassword: builder.mutation<ApiResponse<object>, { email: string }>({
+  query: (data) => ({
+    url: "/auth/forgot-password",
+    method: "POST",
+    body: data,
+  }),
+}),
+
+resetPassword: builder.mutation<ApiResponse<object>, { token: string; newPassword: string }>({
+  query: (data) => ({
+    url: "/auth/reset-password",
+    method: "POST",
+    body: data,
+  }),
+}),
+
   }),
 });
 
@@ -46,4 +62,6 @@ export const {
   useLogoutMutation,
   useRefreshTokenMutation,
   useGetCurrentAdminQuery,
+  useForgotPasswordMutation,
+  useResetPasswordMutation
 } = authApi;

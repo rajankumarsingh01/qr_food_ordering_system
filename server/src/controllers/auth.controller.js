@@ -261,6 +261,104 @@ const getCurrentAdmin =
   );
 
 
+import crypto from "crypto";
+import { sendPasswordResetEmail } from "../services/email.service.js";
+
+// ─── Forgot Password ───────────────────────────────────────────────
+const forgotPassword = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    throw new ApiError(400, "Email is required");
+  }
+
+  const admin = await Admin.findOne({ email });
+
+  // ✅ Security — email exist kare ya nahi, same response do
+  if (!admin) {
+    return res.status(200).json(
+      new ApiResponse(200, {}, "If this email exists, reset link has been sent")
+    );
+  }
+
+  // Reset token generate karo
+  const resetToken = crypto.randomBytes(32).toString("hex");
+
+  // Hash karke DB mein save karo
+  const hashedToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
+  admin.passwordResetToken = hashedToken;
+  admin.passwordResetExpiry = new Date(Date.now() + 15 * 60 * 1000); // 15 min
+  await admin.save({ validateBeforeSave: false });
+
+  // Reset URL
+  const resetUrl = `${process.env.CLIENT_URL}/admin/reset-password?token=${resetToken}`;
+
+  try {
+    await sendPasswordResetEmail({
+      email: admin.email,
+      name: admin.name,
+      resetUrl,
+    });
+
+    return res.status(200).json(
+      new ApiResponse(200, {}, "Password reset link sent to your email")
+    );
+  } catch {
+    // Email fail hone pe token clear karo
+    admin.passwordResetToken = null;
+    admin.passwordResetExpiry = null;
+    await admin.save({ validateBeforeSave: false });
+
+    throw new ApiError(500, "Failed to send email. Please try again.");
+  }
+});
+
+// ─── Reset Password ────────────────────────────────────────────────
+const resetPassword = asyncHandler(async (req, res) => {
+  const { token, newPassword } = req.body;
+
+  if (!token || !newPassword) {
+    throw new ApiError(400, "Token and new password are required");
+  }
+
+  if (newPassword.length < 6) {
+    throw new ApiError(400, "Password must be at least 6 characters");
+  }
+
+  // Token hash karo aur DB mein dhundo
+  const hashedToken = crypto
+    .createHash("sha256")
+    .update(token)
+    .digest("hex");
+
+  const admin = await Admin.findOne({
+    passwordResetToken: hashedToken,
+    passwordResetExpiry: { $gt: Date.now() },
+  }).select("+password");
+
+  if (!admin) {
+    throw new ApiError(400, "Invalid or expired reset token");
+  }
+
+  // Password update karo
+  admin.password = newPassword;
+  admin.passwordResetToken = null;
+  admin.passwordResetExpiry = null;
+  admin.refreshToken = null; // existing sessions logout
+  await admin.save();
+
+  return res.status(200).json(
+    new ApiResponse(200, {}, "Password reset successfully")
+  );
+});
+
+
+
+
 
 
 // remove this in production - only for testing/demo purposes
@@ -288,5 +386,5 @@ const seedAdmin = asyncHandler(async (req, res) => {
 
 
 
-export { loginAdmin, logoutAdmin, refreshAccessToken, getCurrentAdmin, seedAdmin };
+export { loginAdmin, logoutAdmin, refreshAccessToken, getCurrentAdmin, seedAdmin, forgotPassword, resetPassword };
 

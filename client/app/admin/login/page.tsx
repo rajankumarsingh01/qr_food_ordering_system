@@ -156,7 +156,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
-import { Eye, EyeOff, Mail, Lock, UtensilsCrossed } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, UtensilsCrossed, Link } from "lucide-react";
 import { useState } from "react";
 
 import { loginSchema, type LoginFormData } from "@/schemas/login.schema";
@@ -277,6 +277,15 @@ export default function AdminLoginPage() {
                 <p className="mt-1 text-xs text-red-400">{errors.password.message}</p>
               )}
             </div>
+
+            <div className="mt-4 text-center">
+  <Link
+    href="/admin/forgot-password"
+    className="text-sm text-indigo-600 hover:underline"
+  >
+    Forgot password?
+  </Link>
+</div>
 
             {/* Submit */}
             <button

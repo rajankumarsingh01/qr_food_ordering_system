@@ -40,6 +40,9 @@ const env = {
 
   CLIENT_URL:
     process.env.CLIENT_URL,
+
+  RESEND_API_KEY: process.env.RESEND_API_KEY,
+  FROM_EMAIL: process.env.FROM_EMAIL,
 };
 
 export default env;

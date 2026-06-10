@@ -37,24 +37,40 @@
 
 
 
-
 "use client";
 
 import { useLogoutMutation } from "@/redux/api/authApi";
-import { useRouter } from "next/navigation";
+import { clearCredentials } from "@/redux/slices/authSlice";
+import { useAppDispatch } from "@/redux/hooks";
 import { LogOut } from "lucide-react";
 import toast from "react-hot-toast";
 
 export default function LogoutButton() {
+  const dispatch = useAppDispatch();
   const [logoutUser, { isLoading }] = useLogoutMutation();
-  const router = useRouter();
 
   const handleLogout = async () => {
     try {
       await logoutUser().unwrap();
-      router.push("/admin/login");
     } catch {
-      toast.error("Logout failed. Please try again.");
+      // server error ho to bhi local clear karo
+    } finally {
+      // ✅ Redux clear
+      dispatch(clearCredentials());
+
+      // ✅ localStorage sab clear karo
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("qr_current_order");
+        localStorage.removeItem("qr_cart_items");
+        localStorage.removeItem("qr_table_number");
+      }
+
+      toast.success("Logged out successfully");
+
+      // ✅ Hard redirect
+      window.location.href = "/admin/login";
     }
   };
 

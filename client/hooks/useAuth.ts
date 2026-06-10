@@ -20,9 +20,22 @@ export function useAuth() {
     } catch {
       // server error ho to bhi local clear karo
     } finally {
+      // ✅ Redux clear
       dispatch(clearCredentials());
+
+      // ✅ localStorage manually clear karo — sab keys
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("qr_current_order");
+        localStorage.removeItem("qr_cart_items");
+        localStorage.removeItem("qr_table_number");
+      }
+
       toast.success("Logged out successfully");
-      router.push("/admin/login");
+
+      // ✅ Hard redirect — Next.js router cache bhi clear ho
+      window.location.href = "/admin/login";
     }
   };
 

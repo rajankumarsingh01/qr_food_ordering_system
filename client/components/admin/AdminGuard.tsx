@@ -1,6 +1,51 @@
+// "use client";
+
+// import { useEffect } from "react";
+// import { useRouter } from "next/navigation";
+// import { useAppSelector } from "@/redux/hooks";
+
+// export default function AdminGuard({
+//   children,
+// }: {
+//   children: React.ReactNode;
+// }) {
+//   const router = useRouter();
+//   const { isAuthenticated, accessToken } = useAppSelector(
+//     (state) => state.auth
+//   );
+
+//   useEffect(() => {
+//     // localStorage se bhi check karo
+//     const localToken = localStorage.getItem("accessToken");
+
+//     if (!isAuthenticated && !localToken) {
+//       router.replace("/admin/login");
+//     }
+//   }, [isAuthenticated, router]);
+
+//   // Token nahi hai to kuch mat dikhao
+//   const localToken =
+//     typeof window !== "undefined"
+//       ? localStorage.getItem("accessToken")
+//       : null;
+
+//   if (!isAuthenticated && !localToken) {
+//     return (
+//       <div className="flex min-h-screen items-center justify-center">
+//         <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent" />
+//       </div>
+//     );
+//   }
+
+//   return <>{children}</>;
+// }
+
+
+
+
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAppSelector } from "@/redux/hooks";
 
@@ -10,29 +55,24 @@ export default function AdminGuard({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const { isAuthenticated, accessToken } = useAppSelector(
-    (state) => state.auth
-  );
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const [checked, setChecked] = useState(false);
 
   useEffect(() => {
-    // localStorage se bhi check karo
-    const localToken = localStorage.getItem("accessToken");
+    const token = localStorage.getItem("accessToken");
 
-    if (!isAuthenticated && !localToken) {
-      router.replace("/admin/login");
+    if (!isAuthenticated && !token) {
+      window.location.href = "/admin/login";
+    } else {
+      setChecked(true);
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated]);
 
-  // Token nahi hai to kuch mat dikhao
-  const localToken =
-    typeof window !== "undefined"
-      ? localStorage.getItem("accessToken")
-      : null;
-
-  if (!isAuthenticated && !localToken) {
+  // Check hone tak spinner dikhao
+  if (!checked) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent" />
+      <div className="flex min-h-screen items-center justify-center bg-[#f5f5f0]">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-orange-500 border-t-transparent" />
       </div>
     );
   }

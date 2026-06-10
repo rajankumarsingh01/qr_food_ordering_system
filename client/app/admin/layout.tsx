@@ -131,8 +131,6 @@
 
 
 
-
-
 "use client";
 
 import Link from "next/link";
@@ -178,8 +176,6 @@ function AdminSidebar() {
 
   return (
     <aside className="flex w-[220px] flex-col bg-[#0f0f0f] shrink-0 sticky top-0 h-screen">
-
-      {/* Brand */}
       <div className="px-4 py-5 border-b border-white/[0.06]">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-lg bg-orange-500 flex items-center justify-center shrink-0">
@@ -196,7 +192,6 @@ function AdminSidebar() {
         </div>
       </div>
 
-      {/* Nav */}
       <nav className="flex-1 px-2 py-3 space-y-4 overflow-y-auto">
         {NAV_SECTIONS.map((section) => (
           <div key={section.label}>
@@ -227,7 +222,6 @@ function AdminSidebar() {
         ))}
       </nav>
 
-      {/* Footer */}
       <div className="px-2 pb-4 border-t border-white/[0.06] pt-3">
         <div className="flex items-center gap-2.5 px-2.5 py-2 mb-1">
           <div className="w-7 h-7 rounded-lg bg-[#1a1a1a] border border-[#2a2a2a] flex items-center justify-center text-[11px] font-semibold text-[#666] shrink-0">
@@ -249,8 +243,19 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+
+  // ✅ Login page pe Guard aur Sidebar nahi dikhana
+  const isLoginPage =
+    pathname === "/admin/login" ||
+    pathname === "/admin/forgot-password" ||
+    pathname === "/admin/reset-password";
+
+  if (isLoginPage) {
+    return <>{children}</>;
+  }
+
   return (
-    // ✅ AdminGuard — bina login ke koi page nahi khulega
     <AdminGuard>
       <div className="flex min-h-screen bg-[#f5f5f0]">
         <AdminSidebar />
@@ -261,3 +266,6 @@ export default function AdminLayout({
     </AdminGuard>
   );
 }
+
+
+

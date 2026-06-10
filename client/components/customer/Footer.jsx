@@ -1,12 +1,7 @@
 "use client";
 
-import {
-  Heart,
-  Utensils,
-  Github,
-  Linkedin,
-  Globe,
-} from "lucide-react";
+import { Heart, Utensils, Globe } from "lucide-react";
+import { FaGithub, FaLinkedinIn } from "react-icons/fa";
 
 export default function Footer() {
   return (
@@ -58,7 +53,7 @@ export default function Footer() {
               aria-label="GitHub"
               className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-600 dark:border-gray-700 dark:hover:border-indigo-700 dark:hover:bg-indigo-950 dark:hover:text-indigo-400"
             >
-              <Github size={13} />
+              <FaGithub size={13} />
             </a>
 
             <a
@@ -68,7 +63,7 @@ export default function Footer() {
               aria-label="LinkedIn"
               className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-600 dark:border-gray-700 dark:hover:border-indigo-700 dark:hover:bg-indigo-950 dark:hover:text-indigo-400"
             >
-              <Linkedin size={13} />
+              <FaLinkedinIn size={13} />
             </a>
 
             <a
@@ -93,6 +88,7 @@ export default function Footer() {
             {["Privacy", "Terms", "Support"].map((item) => (
               <button
                 key={item}
+                type="button"
                 className="text-[11px] text-gray-400 transition hover:text-indigo-500 dark:text-gray-600 dark:hover:text-indigo-400"
               >
                 {item}

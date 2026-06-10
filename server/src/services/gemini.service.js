@@ -1,77 +1,154 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+// import { GoogleGenerativeAI } from "@google/generative-ai";
+// import env from "../config/env.js";
+
+// const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);
+
+// export const getChatResponse = async ({
+//     userMessage,
+//     menuItems,
+//     categories,
+//     orderStatus,
+//     restaurantInfo,
+// }) => {
+//     // ✅ gemini-1.5-flash — correct model name
+//     const model = genAI.getGenerativeModel({
+//         model: "gemini-2.0-flash",
+//     });
+
+//     const systemContext = `
+// You are a helpful restaurant assistant for "${restaurantInfo.name}".
+// You help customers with menu queries, order tracking, and general questions.
+// Always be friendly, concise, and helpful.
+// Reply in the same language the customer uses (Hindi or English).
+
+// RESTAURANT INFO:
+// - Name: ${restaurantInfo.name}
+
+// MENU CATEGORIES:
+// ${categories.map((c) => `- ${c.name}`).join("\n")}
+
+// AVAILABLE MENU ITEMS:
+// ${menuItems
+//             .filter((item) => item.isAvailable)
+//             .map(
+//                 (item) =>
+//                     `- ${item.name} | ₹${item.price} | ${item.isVeg ? "Veg 🟢" : "Non-Veg 🔴"} | Category: ${item.category?.name ?? "General"}`
+//             )
+//             .join("\n")}
+
+// ${orderStatus
+//             ? `CUSTOMER CURRENT ORDER:
+// - Order ID: ${orderStatus.orderId}
+// - Status: ${orderStatus.status}
+// - Items: ${orderStatus.items?.map((i) => `${i.name} x${i.quantity}`).join(", ")}
+// - Total: ₹${orderStatus.totalAmount}`
+//             : "Customer has no active order."
+//         }
+
+// RULES:
+// 1. Only answer restaurant/food related questions
+// 2. Keep responses short — max 3-4 lines
+// 3. Do not make up items or prices
+// 4. If off-topic, politely redirect to food/order help
+//   `;
+
+//     // ✅ Retry logic — 503 pe 2 baar try karo
+//     let lastError;
+//     for (let attempt = 1; attempt <= 3; attempt++) {
+//         try {
+//             const result = await model.generateContent([
+//                 { text: systemContext },
+//                 { text: `Customer: ${userMessage}` },
+//             ]);
+//             return result.response.text();
+//         } catch (error) {
+//             lastError = error;
+//             const is503 = error?.message?.includes("503");
+//             if (is503 && attempt < 3) {
+//                 // Wait karke retry karo
+//                 await new Promise((resolve) => setTimeout(resolve, attempt * 1000));
+//                 continue;
+//             }
+//             break;
+//         }
+//     }
+
+//     throw lastError;
+// };
+
+
+
+
+
+
+
+
+
+import OpenAI from "openai";
 import env from "../config/env.js";
 
-const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);
+const client = new OpenAI({
+  baseURL: "https://openrouter.ai/api/v1",
+  apiKey: env.OPENROUTER_API_KEY,
+});
 
 export const getChatResponse = async ({
-    userMessage,
-    menuItems,
-    categories,
-    orderStatus,
-    restaurantInfo,
+  userMessage,
+  menuItems,
+  categories,
+  orderStatus,
+  restaurantInfo,
 }) => {
-    // ✅ gemini-1.5-flash — correct model name
-    const model = genAI.getGenerativeModel({
-        model: "gemini-2.0-flash",
-    });
-
-    const systemContext = `
+  const systemContext = `
 You are a helpful restaurant assistant for "${restaurantInfo.name}".
-You help customers with menu queries, order tracking, and general questions.
-Always be friendly, concise, and helpful.
-Reply in the same language the customer uses (Hindi or English).
 
-RESTAURANT INFO:
-- Name: ${restaurantInfo.name}
+Reply in same language as customer.
 
 MENU CATEGORIES:
 ${categories.map((c) => `- ${c.name}`).join("\n")}
 
-AVAILABLE MENU ITEMS:
+AVAILABLE ITEMS:
 ${menuItems
-            .filter((item) => item.isAvailable)
-            .map(
-                (item) =>
-                    `- ${item.name} | ₹${item.price} | ${item.isVeg ? "Veg 🟢" : "Non-Veg 🔴"} | Category: ${item.category?.name ?? "General"}`
-            )
-            .join("\n")}
+  .filter((item) => item.isAvailable)
+  .map(
+    (item) =>
+      `- ${item.name} | ₹${item.price} | ${
+        item.isVeg ? "Veg" : "Non-Veg"
+      }`
+  )
+  .join("\n")}
 
-${orderStatus
-            ? `CUSTOMER CURRENT ORDER:
-- Order ID: ${orderStatus.orderId}
-- Status: ${orderStatus.status}
-- Items: ${orderStatus.items?.map((i) => `${i.name} x${i.quantity}`).join(", ")}
-- Total: ₹${orderStatus.totalAmount}`
-            : "Customer has no active order."
-        }
+${
+  orderStatus
+    ? `
+CUSTOMER ORDER:
+Status: ${orderStatus.status}
+Total: ₹${orderStatus.totalAmount}
+`
+    : ""
+}
 
 RULES:
-1. Only answer restaurant/food related questions
-2. Keep responses short — max 3-4 lines
-3. Do not make up items or prices
-4. If off-topic, politely redirect to food/order help
-  `;
+- Only answer restaurant related questions
+- Keep response under 4 lines
+- Don't invent menu items
+`;
 
-    // ✅ Retry logic — 503 pe 2 baar try karo
-    let lastError;
-    for (let attempt = 1; attempt <= 3; attempt++) {
-        try {
-            const result = await model.generateContent([
-                { text: systemContext },
-                { text: `Customer: ${userMessage}` },
-            ]);
-            return result.response.text();
-        } catch (error) {
-            lastError = error;
-            const is503 = error?.message?.includes("503");
-            if (is503 && attempt < 3) {
-                // Wait karke retry karo
-                await new Promise((resolve) => setTimeout(resolve, attempt * 1000));
-                continue;
-            }
-            break;
-        }
-    }
+  const completion = await client.chat.completions.create({
+    model: "google/gemini-2.5-flash",
+    messages: [
+      {
+        role: "system",
+        content: systemContext,
+      },
+      {
+        role: "user",
+        content: userMessage,
+      },
+    ],
+    temperature: 0.7,
+    max_tokens: 200,
+  });
 
-    throw lastError;
+  return completion.choices[0].message.content;
 };

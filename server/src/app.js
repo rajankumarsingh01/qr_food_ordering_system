@@ -26,6 +26,8 @@ from "./routes/review.routes.js";
 import analyticsRoutes
 from "./routes/analytics.routes.js";
 
+import chatRoutes from "./routes/chat.routes.js";
+
 const app = express();
 
 app.use(helmet());
@@ -88,6 +90,11 @@ app.use(
 app.use(
   "/api/analytics",
   analyticsRoutes
+);
+
+app.use(
+  "/api/chat",
+  chatRoutes
 );
 
 app.get("/api/v1/health", (req, res) => {

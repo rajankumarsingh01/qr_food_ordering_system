@@ -1,3 +1,4 @@
+import ChatWidget from "@/components/customer/chatWidget";
 import Navbar from "@/components/shared/Navbar";
 
 export default function CustomerLayout({
@@ -12,6 +13,7 @@ export default function CustomerLayout({
       <main>
         {children}
       </main>
+      <ChatWidget/>
     </>
   );
 }

@@ -43,6 +43,8 @@ const env = {
 
   RESEND_API_KEY: process.env.RESEND_API_KEY,
   FROM_EMAIL: process.env.FROM_EMAIL,
+
+  GEMINI_API_KEY: process.env.GEMINI_API_KEY,
 };
 
 export default env;

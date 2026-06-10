@@ -436,7 +436,7 @@ export default function ChatWidget() {
                 </p>
                 <p className="flex items-center gap-1 text-[11px] text-indigo-200">
                   <Sparkles size={9} />
-                  Powered by Gemini
+                  Powered by Rajandev magic ✨
                 </p>
               </div>
             </div>

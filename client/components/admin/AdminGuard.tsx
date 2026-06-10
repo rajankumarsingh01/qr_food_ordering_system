@@ -42,11 +42,9 @@
 
 
 
-
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { useAppSelector } from "@/redux/hooks";
 
 export default function AdminGuard({
@@ -54,21 +52,23 @@ export default function AdminGuard({
 }: {
   children: React.ReactNode;
 }) {
-  const router = useRouter();
   const { isAuthenticated } = useAppSelector((state) => state.auth);
   const [checked, setChecked] = useState(false);
+  const [allowed, setAllowed] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
 
-    if (!isAuthenticated && !token) {
-      window.location.href = "/admin/login";
+    if (isAuthenticated || token) {
+      setAllowed(true);
     } else {
-      setChecked(true);
+      // ✅ router nahi — window.location use karo
+      window.location.replace("/admin/login");
     }
-  }, [isAuthenticated]);
 
-  // Check hone tak spinner dikhao
+    setChecked(true);
+  }, []); // ← empty dependency — sirf mount pe ek baar
+
   if (!checked) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#f5f5f0]">
@@ -76,6 +76,8 @@ export default function AdminGuard({
       </div>
     );
   }
+
+  if (!allowed) return null;
 
   return <>{children}</>;
 }

@@ -5,11 +5,24 @@ import ReduxProvider from "@/providers/redux-provider";
 
 import { Toaster } from "react-hot-toast";
 
+// export const metadata: Metadata = {
+//   title: "QR Food Ordering",
+//   description:
+//     "Restaurant QR Food Ordering System",
+// };
+
+
+
 export const metadata: Metadata = {
   title: "QR Food Ordering",
-  description:
-    "Restaurant QR Food Ordering System",
+  description: "Contactless restaurant ordering system",
+  icons: {
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
 };
+
 
 export default function RootLayout({
   children,

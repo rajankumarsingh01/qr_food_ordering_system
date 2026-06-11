@@ -44,3 +44,30 @@ Deployment:
 - GitHub Actions
 - Vercel
 - Render
+
+
+
+
+## 🐳 Docker Setup
+
+### Development
+```bash
+docker-compose up --build
+```
+
+### Production
+```bash
+docker-compose -f docker-compose.prod.yml up --build -d
+```
+
+### Individual services
+```bash
+# Backend only
+docker-compose up backend
+
+# Stop all
+docker-compose down
+
+# Stop + volumes delete
+docker-compose down -v
+```

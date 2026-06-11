@@ -1,0 +1,13 @@
+node_modules
+**/node_modules
+.next
+**/.next
+.env
+**/.env
+.env.*
+**/.env.*
+.git
+.gitignore
+README.md
+docker-data/
+*.log
